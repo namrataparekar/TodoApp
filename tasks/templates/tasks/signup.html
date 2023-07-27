@@ -1,0 +1,8 @@
+<h1>Sign up</h1>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" action="profile">Sign up</button>
+</form>
+
+{% comment %} <a href="{% url 'tasks:profile' %}">Profile</a> {% endcomment %}
