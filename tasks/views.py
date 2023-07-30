@@ -20,6 +20,12 @@ def index(request):
         if form.is_valid():
             form.save()
         return redirect('/list')
+    else:
+        user=request.user
+    
+        context={'tasks':tasks,'user':user,'form':TaskForm()}
+        
+        return render(request,'tasks/list.html',context)
     
     context = {'tasks':tasks, 'form':form}
     return render(request,'tasks/list.html', context)
@@ -68,6 +74,11 @@ class UserView(DetailView):
         return self.request.user
 
 
+def assign_domain_admin(user):
+    if not User.objects.filter(domain=user.domain, is_admin=True).exists():
+        user.is_admin = True
+        user.save()
+
 def signup(request):
     # import ipdb;ipdb.set_trace()
     if request.method == 'POST':
@@ -75,11 +86,23 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             raw_password = form.cleaned_data.get('password1')
+            
+            dom=form.cleaned_data.get('email')
+            res = str(dom[dom.index('@') + 1 : ])
+            user.domain=res
+            user.save()
             user = authenticate(request, email=user.email, password=raw_password)
             if user is not None:
                 login(request, user)
             else:
                 print("user is not authenticated")
+                
+            assign_domain_admin(user)
+            print(user.domain)
+            print(user.is_admin)
+            if user.is_admin == False:
+                user.is_active = False
+            user.save()
             return redirect('tasks:profile')
     else:
         form = SignUpForm()
