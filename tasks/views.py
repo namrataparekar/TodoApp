@@ -16,19 +16,27 @@ def index(request):
     form=TaskForm()
     
     if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return redirect('/list')
+        try:
+            form = TaskForm(request.POST)
+            user=request.user
+
+            if form.is_valid():
+                mytodo = form.save()
+                mytodo.user=request.user
+                mytodo.save()
+            return redirect('/list')
+        except ValueError:
+            return render(request,'tasks/list.html',{'form':TaskForm(), 'error':'Bad data passed in. Try again.'})
+   
     else:
         user=request.user
-    
+        print(user)   
         context={'tasks':tasks,'user':user,'form':TaskForm()}
         
         return render(request,'tasks/list.html',context)
     
-    context = {'tasks':tasks, 'form':form}
-    return render(request,'tasks/list.html', context)
+    # context = {'tasks':tasks, 'form':form}
+    # return render(request,'tasks/list.html', context)
 
 def update_task(request, pk):
     task= Task.objects.get(id=pk)
