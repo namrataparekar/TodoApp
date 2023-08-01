@@ -1,6 +1,11 @@
 <h1>My profile</h1>
 <p>
-  {{ object }}
+  {{ user }}
 </p>
+
 <a href="{% url 'tasks:logout' %}">Logout</a>
 <a href="{% url 'tasks:list' %}">Tasks</a>
+
+{% if user.is_admin == True %}
+<a href="{% url 'tasks:admindashboard' %}">AssignTask</a>
+{% endif %}

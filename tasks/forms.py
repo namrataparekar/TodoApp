@@ -15,7 +15,7 @@ class TaskForm(forms.ModelForm):
     title= forms.CharField(widget= forms.TextInput(attrs={'placeholder':'Add new task...'}))
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ('title','complete',)
         
         
 
@@ -46,7 +46,7 @@ class AccountAuthenticationForm(forms.ModelForm):
             email = self.cleaned_data['email']
             password = self.cleaned_data['password']
             if not authenticate(email=email, password=password):
-                raise forms.ValidationError("Invalid Login")
+                raise forms.ValidationError("Request Pending at Admin")
                 
         
         

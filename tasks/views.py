@@ -40,6 +40,7 @@ def index(request):
 
 def update_task(request, pk):
     task= Task.objects.get(id=pk)
+    
     print(pk)
     form = TaskForm(instance=task)
     
@@ -124,24 +125,33 @@ def logoutView(request):
 def loginView(request):
     tasks = Task.objects.all()
     form = TaskForm()
-    context = {"tasks":tasks, "form":form}
-    user = request.user
+    user= request.user
+    # print(user)
+    # context = {"tasks":tasks, "form":form}
+    context = {"tasks":tasks, "form":form,"user":request.user}
     
-    # if user.is_authenticated():
-    #     return redirect("tasks:list")
+    if user.is_authenticated:
+        context2 = {"tasks":tasks, "form":form,"user":user}
+        return render(request,'tasks/profile.html',context2)
     
     if request.POST:
         form= AccountAuthenticationForm(request.POST)
         if form.is_valid():
+            
             email = request.POST['email']
             password = request.POST['password']
             user = authenticate(email=email, password=password)
             if user:
+                
+                mcontext = {"tasks":tasks, "form":TaskForm(),"user":user}
+                
                 login(request,user)
                 destination= get_redirect_if_exists(request)
                 if destination:
                     return redirect(destination)
-                return render(request,"tasks/list.html",context)
+                
+                print(user)
+                return render(request,"tasks/list.html",mcontext)
         else:
             context['login_form']=form
     return render(request,'tasks/login.html',context)
@@ -153,3 +163,8 @@ def get_redirect_if_exists(request):
         if request.GET.get("next"):
             redirect=str(request.GET.get("next"))
     return redirect
+
+def admindashboard(request):
+    form=TaskForm()
+    context={"form":form}
+    return render(request,'tasks/admindash.html',context)

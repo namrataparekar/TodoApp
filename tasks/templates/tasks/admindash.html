@@ -1,13 +1,12 @@
-<h3>To Do</h3>
+<h3>Create task for Any User</h3>
 <form method="POST" action={% url "tasks:list" %}>
     {% csrf_token %}
     {{form.title}}
     <input type="submit"  name="Create Task">
 </form> 
 
-<a href="{% url 'tasks:profile' %}">Profile</a>
-{%for task in tasks%}
-    {%if task.user.id == user.id%} 
+{% comment %} {%for task in tasks%}
+    
     <div>
         <a href="{% url 'tasks:update_task' task.id %}">Update</a>
         <a href="{% url 'tasks:delete' task.id %}">Delete</a>
@@ -20,5 +19,5 @@
         {%endif%}
 
     </div>
-    {%endif%}
-{%endfor%}  
+    
+{%endfor%}   {% endcomment %}
